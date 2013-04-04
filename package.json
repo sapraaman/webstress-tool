@@ -1,0 +1,34 @@
+{
+    "name": "webstress-tool",
+    "version": "0.0.1",
+    "description": "web stress tool",
+    "main": "lib/index.js",    
+    "author": {
+        "name": "Yaniv Kessler"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/yanush/webstress-tool.git"
+    },
+    "bin": { 
+        "webstress": "./index.js"
+    },
+    "bugs": {
+        "url": "http://github.com/yanush/webstress-tool/issues"
+    },
+    "licenses": [
+        {
+        "type": "MIT",
+        "url": "https://raw.github.com/yanush/webstress-tool/master/LICENSE"
+        }
+    ],
+    "dependencies": {        
+    	"async": "*"
+    },
+    "devDependencies": {
+        "vows": "*"
+    },
+    "engine": {
+        "node": ">=0.8"
+    }
+}
