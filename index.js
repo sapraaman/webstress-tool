@@ -22,8 +22,8 @@ var method = process.argv[2];
 var target = urlParser.parse(process.argv[3]);
 target.method = method;
 
-var seconds = process.argv[4] || 1;
-var requestPerSecond = process.argv[5] || 1;
+var seconds = parseInt(process.argv[4] || 1)
+var requestPerSecond = parseInt(process.argv[5]) || 1;
 var payloadFilename = process.argv[6];
 
 console.log('about to send %s %s requests to url %s over %s seconds', requestPerSecond * seconds, method.toUpperCase(), process.argv[3], seconds);
