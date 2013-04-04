@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var async = require('async');
 var http = require('http');
 var urlParser = require('url');
