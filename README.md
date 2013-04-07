@@ -28,6 +28,8 @@ Using a file:
 ```
 Using the payload api:
 ```
+	// payload.js:
+	
 	var api = function() {
 	  //do something...precalcie
 	}
@@ -40,7 +42,7 @@ Using the payload api:
 	module.exports = api;
 ```
 
-```
+```	
 	webstress POST http://www.test.com 10 5 payload.js
 ```
 
