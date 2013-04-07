@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var async = require('async');
 var http = require('http');
+var https = require('https');
 var urlParser = require('url');
 var $u = require('util');
 var fs = require('fs');
@@ -11,16 +12,11 @@ if (process.argv.length < 4) {
 	return;
 }
 
-var agent = new http.Agent({
-        maxSockets: 10240
-    });
-
-http.globalAgent = agent;
-
 
 var method = process.argv[2];
 var target = urlParser.parse(process.argv[3]);
 target.method = method;
+var httpd = (target.protocol.match(/^https/i)) ? https : http;
 
 var seconds = parseInt(process.argv[4] || 1)
 var requestPerSecond = parseInt(process.argv[5]) || 1;
@@ -32,6 +28,12 @@ if(payloadFilename && payloadFilename.match(/\.js$/i)) {
 } else {
   payload.filename = payloadFilename;
 }
+
+var agent = new httpd.Agent({
+        maxSockets: 10240
+    });
+
+httpd.globalAgent = agent;
 
 console.log('about to send %s %s requests to url %s over %s seconds', requestPerSecond * seconds, method.toUpperCase(), process.argv[3], seconds);
 
@@ -48,7 +50,7 @@ if (requestPerSecond > 10000) {
 function sendRequest(callback) {
 	var start = Date.now();
 
-	var request = http.request(target, function(response) {
+	var request = httpd.request(target, function(response) {
 		var measuredTime = Date.now() - start;
 		if (response.statusCode === 200) {			
 
