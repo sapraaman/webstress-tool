@@ -25,6 +25,13 @@ target.method = method;
 var seconds = parseInt(process.argv[4] || 1)
 var requestPerSecond = parseInt(process.argv[5]) || 1;
 var payloadFilename = process.argv[6];
+var payload = {};
+
+if(payloadFilename && payloadFilename.match(/\.js$/i)) {
+  payload = new (require(payloadFilename))();
+} else {
+  payload.filename = payloadFilename;
+}
 
 console.log('about to send %s %s requests to url %s over %s seconds', requestPerSecond * seconds, method.toUpperCase(), process.argv[3], seconds);
 
@@ -69,10 +76,17 @@ function sendRequest(callback) {
 		}
 	});
 
-	if (payloadFilename) {
-		var readstream = fs.createReadStream(payloadFilename);
+	if (payload.filename) {
+		var readstream = fs.createReadStream(payload.filename);
 		readstream.pipe(request);
-	} else {
+	} else if(payload.body) {
+    var dreq = payload.body();
+    if(dreq.pipe) {
+      dreq.pipe(request);
+    } else {
+      request.end(dreq);
+    }
+  }  else {
 		request.end();
 	}
 }
