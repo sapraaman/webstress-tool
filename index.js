@@ -37,12 +37,13 @@ if (requestPerSecond > 10000) {
 	return;
 }
 
+var payload = fs.readFileSync(payloadFilename);
 
 function sendRequest(callback) {
-	var start = Date.now();
+	var start;
 
 	var request = http.request(target, function(response) {
-		var measuredTime = Date.now() - start;
+		
 		if (response.statusCode === 200) {			
 
 			if (requestPerSecond === 1 && seconds === 1) {
@@ -62,16 +63,19 @@ function sendRequest(callback) {
 				response.resume();
 			}
 
-	 		callback(null, measuredTime);		 	
+	 		callback(null, Date.now() - start);		 	
 
 		} else {
 			callback(response.statusCode);
 		}
 	});
 
-	if (payloadFilename) {
-		var readstream = fs.createReadStream(payloadFilename);
-		readstream.pipe(request);
+	request.on('socket', function () {		
+		start = Date.now();
+	});
+
+	if (payload) {
+		request.end(payload);
 	} else {
 		request.end();
 	}
@@ -82,26 +86,25 @@ function sendRequestsPerSecond(howmany) {
 	for (var i = 0; i < howmany; i++) {
 		work.push(sendRequest);
 	}
+
 	async.parallel(work, sendDone);
 }
 
-function sendDone(err, results) {
-
+function sendDone (err, results) {
 	if (err) {
-		console.log($u.inspect(err));
-	} else if ($u.isArray(results)) {
+		console.log($u.inspect(err));				
+	} else if ($u.isArray(results) && results.length > 0 ) {
+		var time = 0;
 
-		var measuredTime = 0;
+		for (var i = 0; i < results.length; i++) {
+			time += results[i];
+		}
 
-		for (var x = 0; x < results.length; x++) {			
-			measuredTime += results[x];
-		}	
-		console.log('total measured %s', measuredTime);
-		console.log('avg %s', measuredTime / results.length);
-		
+		console.log("done, took total over: %s, avg response time: %s", time, time / results.length);
 	} else {
 		console.log('done');
-	}
+	}		
+	
 }
 
 
