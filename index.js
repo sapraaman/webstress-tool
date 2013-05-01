@@ -80,7 +80,6 @@ function sendRequest(callback) {
 		}
 	});
 
-<<<<<<< HEAD
 	request.on('socket', function () {		
 		start = Date.now();
 	});
