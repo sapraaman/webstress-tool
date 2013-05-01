@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var async = require('async');
 var http = require('http');
+var https = require('https');
 var urlParser = require('url');
 var $u = require('util');
 var fs = require('fs');
@@ -11,20 +12,28 @@ if (process.argv.length < 4) {
 	return;
 }
 
-var agent = new http.Agent({
-        maxSockets: 10240
-    });
-
-http.globalAgent = agent;
-
 
 var method = process.argv[2];
 var target = urlParser.parse(process.argv[3]);
 target.method = method;
+var httpd = (target.protocol.match(/^https/i)) ? https : http;
 
 var seconds = parseInt(process.argv[4] || 1)
 var requestPerSecond = parseInt(process.argv[5]) || 1;
 var payloadFilename = process.argv[6];
+var payload = {};
+
+if(payloadFilename && payloadFilename.match(/\.js$/i)) {
+  payload = new (require(payloadFilename))();
+} else {
+  payload.filename = payloadFilename;
+}
+
+var agent = new httpd.Agent({
+        maxSockets: 10240
+    });
+
+httpd.globalAgent = agent;
 
 console.log('about to send %s %s requests to url %s over %s seconds', requestPerSecond * seconds, method.toUpperCase(), process.argv[3], seconds);
 
@@ -42,8 +51,9 @@ var payload = fs.readFileSync(payloadFilename);
 function sendRequest(callback) {
 	var start;
 
-	var request = http.request(target, function(response) {
-		
+
+	var request = httpd.request(target, function(response) {
+
 		if (response.statusCode === 200) {			
 
 			if (requestPerSecond === 1 && seconds === 1) {
@@ -70,13 +80,21 @@ function sendRequest(callback) {
 		}
 	});
 
+<<<<<<< HEAD
 	request.on('socket', function () {		
 		start = Date.now();
 	});
 
 	if (payload) {
 		request.end(payload);
-	} else {
+	} else if(payload.body) {
+    	var dreq = payload.body();
+	    if(dreq.pipe) {
+	      dreq.pipe(request);
+	    } else {
+	      request.end(dreq);
+	    }
+  	}  else {
 		request.end();
 	}
 }
