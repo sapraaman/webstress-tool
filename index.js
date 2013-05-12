@@ -7,7 +7,7 @@ var $u = require('util');
 var fs = require('fs');
 
 if (process.argv.length < 4) {
-	console.log('usage: webstress <method> <url> <seconds> <requests per second> <optional payload filename>');
+	console.log('usage: webstress <method> <url> <seconds> <requests per second> <optional payload filename> <optional headers>');
 	process.exit(1);
 	return;
 }
@@ -21,12 +21,30 @@ var httpd = (target.protocol.match(/^https/i)) ? https : http;
 var seconds = parseInt(process.argv[4] || 1)
 var requestPerSecond = parseInt(process.argv[5]) || 1;
 var payloadFilename = process.argv[6];
+
 var payload = {};
 
 if(payloadFilename && payloadFilename.match(/\.js$/i)) {
   payload = new (require(payloadFilename))();
 } else {
-  payload.filename = payloadFilename;
+  payload = fs.readFileSync(payloadFilename);
+}
+
+var headers = {}
+
+if (process.argv[7]) {
+	// assume json
+	if (process.argv[7][0] === '{') {
+		headers = JSON.parse(process.argv[7]);
+	} else {
+		var headersFile = fs.readFileSync(process.argv[7]);
+		if (headersFile)
+			headers = JSON.parse(headersFile);
+		else
+			console.log('could not read headers file: %s', process.argv[7]);
+	}	
+
+	console.log(headers);
 }
 
 var agent = new httpd.Agent({
@@ -46,11 +64,8 @@ if (requestPerSecond > 10000) {
 	return;
 }
 
-var payload = fs.readFileSync(payloadFilename);
-
 function sendRequest(callback) {
 	var start;
-
 
 	var request = httpd.request(target, function(response) {
 
@@ -79,6 +94,10 @@ function sendRequest(callback) {
 			callback(response.statusCode);
 		}
 	});
+
+	for (var h in headers) {
+		request.setHeader(h, headers[h]);
+	}
 
 	request.on('socket', function () {		
 		start = Date.now();

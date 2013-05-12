@@ -1,6 +1,6 @@
 {
     "name": "webstress-tool",
-    "version": "0.0.4",
+    "version": "0.0.7",
     "description": "web stress tool",
     "main": "lib/index.js",    
     "keywords": ["stress test", "web stress", "stress"],
@@ -24,7 +24,8 @@
         }
     ],
     "dependencies": {        
-    	"async": "*"
+    	"async": "*",
+        "optimist": "*"
     },
     "devDependencies": {
         "vows": "*"
