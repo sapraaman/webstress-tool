@@ -1,6 +1,6 @@
 {
     "name": "webstress-tool",
-    "version": "0.0.9",
+    "version": "0.1.0",
     "description": "web stress tool",
     "main": "lib/index.js",    
     "keywords": ["stress test", "web stress", "stress"],
