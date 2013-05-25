@@ -105,7 +105,7 @@ function sendRequest(callback) {
 
 	if (payload) {
 		request.end(payload);
-	} else if(payload.body) {
+	} else if(payload && payload.body) {
     	var dreq = payload.body();
 	    if(dreq.pipe) {
 	      dreq.pipe(request);
