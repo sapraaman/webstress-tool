@@ -22,7 +22,7 @@ var seconds = parseInt(process.argv[4] || 1)
 var requestPerSecond = parseInt(process.argv[5]) || 1;
 var payloadFilename = process.argv[6];
 
-var payload = {};
+var payload;
 
 if(payloadFilename && payloadFilename.match(/\.js$/i)) {
   payload = new (require(payloadFilename))();
