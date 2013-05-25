@@ -26,7 +26,7 @@ var payload = {};
 
 if(payloadFilename && payloadFilename.match(/\.js$/i)) {
   payload = new (require(payloadFilename))();
-} else {
+} else if (payloadFilename) {
   payload = fs.readFileSync(payloadFilename);
 }
 
