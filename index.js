@@ -47,11 +47,7 @@ if (process.argv[7]) {
 	console.log(headers);
 }
 
-var agent = new httpd.Agent({
-        maxSockets: 10240
-    });
-
-httpd.globalAgent = agent;
+httpd.globalAgent.maxSockets = 10240;
 
 console.log('about to send %s %s requests to url %s over %s seconds', requestPerSecond * seconds, method.toUpperCase(), process.argv[3], seconds);
 
