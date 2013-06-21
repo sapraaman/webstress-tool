@@ -9,18 +9,18 @@
     },
     "repository": {
         "type": "git",
-        "url": "http://github.com/yanush/webstress-tool.git"
+        "url": "http://github.com/kessler-y/webstress-tool.git"
     },
     "bin": { 
         "webstress": "./index.js"
     },
     "bugs": {
-        "url": "http://github.com/yanush/webstress-tool/issues"
+        "url": "http://github.com/kessler-y/webstress-tool/issues"
     },
     "licenses": [
         {
         "type": "MIT",
-        "url": "https://raw.github.com/yanush/webstress-tool/master/LICENSE"
+        "url": "https://raw.github.com/kessler-y/webstress-tool/master/LICENSE"
         }
     ],
     "dependencies": {        
